@@ -1,0 +1,477 @@
+{
+  "characterId": "yuli-qingyi",
+  "displayName": "玉璃清仪",
+  "sourceDir": "_asset_intake/yuli-qingyi-raw",
+  "outputDir": "public/assets/characters/yuli-qingyi",
+  "generatedAt": "2026-05-10T16:03:32.962Z",
+  "scannedCount": 10,
+  "images": [
+    {
+      "index": 1,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_09 (1).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_09 (1).png",
+      "originalCopyName": "source-01.png",
+      "originalCopyPath": "original/source-01.png",
+      "width": 1122,
+      "height": 1402,
+      "aspectRatio": 0.8,
+      "fileSizeBytes": 1236487,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 1
+    },
+    {
+      "index": 2,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_09 (2).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_09 (2).png",
+      "originalCopyName": "source-02.png",
+      "originalCopyPath": "original/source-02.png",
+      "width": 1448,
+      "height": 1086,
+      "aspectRatio": 1.333,
+      "fileSizeBytes": 1678936,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 2
+    },
+    {
+      "index": 3,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_09 (3).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_09 (3).png",
+      "originalCopyName": "source-03.png",
+      "originalCopyPath": "original/source-03.png",
+      "width": 1122,
+      "height": 1402,
+      "aspectRatio": 0.8,
+      "fileSizeBytes": 1268922,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 3
+    },
+    {
+      "index": 4,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+      "originalCopyName": "source-04.png",
+      "originalCopyPath": "original/source-04.png",
+      "width": 1122,
+      "height": 1402,
+      "aspectRatio": 0.8,
+      "fileSizeBytes": 1651422,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 4
+    },
+    {
+      "index": 5,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyName": "source-05.png",
+      "originalCopyPath": "original/source-05.png",
+      "width": 1254,
+      "height": 1254,
+      "aspectRatio": 1,
+      "fileSizeBytes": 1794078,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 5
+    },
+    {
+      "index": 6,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+      "originalCopyName": "source-06.png",
+      "originalCopyPath": "original/source-06.png",
+      "width": 1448,
+      "height": 1086,
+      "aspectRatio": 1.333,
+      "fileSizeBytes": 1714321,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 6
+    },
+    {
+      "index": 7,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (7).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_11 (7).png",
+      "originalCopyName": "source-07.png",
+      "originalCopyPath": "original/source-07.png",
+      "width": 1448,
+      "height": 1086,
+      "aspectRatio": 1.333,
+      "fileSizeBytes": 1967897,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 7
+    },
+    {
+      "index": 8,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (8).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_12 (8).png",
+      "originalCopyName": "source-08.png",
+      "originalCopyPath": "original/source-08.png",
+      "width": 1448,
+      "height": 1086,
+      "aspectRatio": 1.333,
+      "fileSizeBytes": 1785531,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 8
+    },
+    {
+      "index": 9,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (9).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_12 (9).png",
+      "originalCopyName": "source-09.png",
+      "originalCopyPath": "original/source-09.png",
+      "width": 1448,
+      "height": 1086,
+      "aspectRatio": 1.333,
+      "fileSizeBytes": 2335345,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 9
+    },
+    {
+      "index": 10,
+      "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+      "sourcePath": "D:\\UserData\\Desktop\\Venus\\_asset_intake\\yuli-qingyi-raw\\ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+      "originalCopyName": "source-10.png",
+      "originalCopyPath": "original/source-10.png",
+      "width": 1122,
+      "height": 1402,
+      "aspectRatio": 0.8,
+      "fileSizeBytes": 1267306,
+      "hasAlpha": false,
+      "probablyTransparent": false,
+      "orderHint": 10
+    }
+  ],
+  "mappings": {
+    "fullbodyFront": {
+      "slot": "fullbodyFront",
+      "manifestKey": "assets.stage.fullbodyFront",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/stage/fullbody-front.png",
+      "publicPath": "/assets/characters/yuli-qingyi/stage/fullbody-front.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_09 (1).png",
+      "originalCopyPath": "original/source-01.png",
+      "confidence": 0.99,
+      "reason": "order hint 1; aspect 0.8; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_09 (3).png",
+          "score": 0.56,
+          "reason": "aspect 0.8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+          "score": 0.56,
+          "reason": "aspect 0.8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+          "score": 0.56,
+          "reason": "aspect 0.8; usable resolution"
+        }
+      ]
+    },
+    "turnaroundSheet": {
+      "slot": "turnaroundSheet",
+      "manifestKey": "assets.reference.turnaroundSheet",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/reference/turnaround-sheet.png",
+      "publicPath": "/assets/characters/yuli-qingyi/reference/turnaround-sheet.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_09 (2).png",
+      "originalCopyPath": "original/source-02.png",
+      "confidence": 0.68,
+      "reason": "order hint 2; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_09 (3).png",
+          "score": 0.4,
+          "reason": "order hint 3; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+          "score": 0.22,
+          "reason": "usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+          "score": 0.22,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "transparentFullbody": {
+      "slot": "transparentFullbody",
+      "manifestKey": "assets.stage.transparentFullbody",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/stage/transparent-fullbody.png",
+      "publicPath": "/assets/characters/yuli-qingyi/stage/transparent-fullbody.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_09 (3).png",
+      "originalCopyPath": "original/source-03.png",
+      "confidence": 0.84,
+      "reason": "order hint 3; aspect 0.8; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+          "score": 0.56,
+          "reason": "order hint 4; aspect 0.8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+          "score": 0.38,
+          "reason": "aspect 0.8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+          "score": 0.23,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "halfbody": {
+      "slot": "halfbody",
+      "manifestKey": "assets.stage.halfbody",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/stage/halfbody.png",
+      "publicPath": "/assets/characters/yuli-qingyi/stage/halfbody.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (4).png",
+      "originalCopyPath": "original/source-04.png",
+      "confidence": 0.96,
+      "reason": "order hint 4; aspect 0.8; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+          "score": 0.6,
+          "reason": "order hint 5; aspect 1; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+          "score": 0.42,
+          "reason": "aspect 0.8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.26,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "avatar": {
+      "slot": "avatar",
+      "manifestKey": "assets.portraits.avatar",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/avatar.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/avatar.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.99,
+      "reason": "order hint 5; aspect 1; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.5,
+          "reason": "order hint 6; aspect 1.333; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (7).png",
+          "score": 0.32,
+          "reason": "aspect 1.333; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (8).png",
+          "score": 0.32,
+          "reason": "aspect 1.333; usable resolution"
+        }
+      ]
+    },
+    "expressionSheet": {
+      "slot": "expressionSheet",
+      "manifestKey": "assets.portraits.expressionSheet",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/expression-sheet.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/expression-sheet.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_11 (7).png",
+      "originalCopyPath": "original/source-07.png",
+      "confidence": 0.68,
+      "reason": "order hint 7; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.4,
+          "reason": "order hint 6; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (8).png",
+          "score": 0.4,
+          "reason": "order hint 8; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (9).png",
+          "score": 0.22,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "actionStates": {
+      "slot": "actionStates",
+      "manifestKey": "assets.reference.actionStates",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/reference/action-states.png",
+      "publicPath": "/assets/characters/yuli-qingyi/reference/action-states.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_12 (8).png",
+      "originalCopyPath": "original/source-08.png",
+      "confidence": 0.68,
+      "reason": "order hint 8; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_12 (9).png",
+          "score": 0.4,
+          "reason": "order hint 9; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.22,
+          "reason": "usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+          "score": 0.22,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "materialDetails": {
+      "slot": "materialDetails",
+      "manifestKey": "assets.reference.materialDetails",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/reference/material-details.png",
+      "publicPath": "/assets/characters/yuli-qingyi/reference/material-details.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_12 (9).png",
+      "originalCopyPath": "original/source-09.png",
+      "confidence": 0.72,
+      "reason": "order hint 9; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+          "score": 0.44,
+          "reason": "order hint 10; usable resolution"
+        },
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.26,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "presetCard": {
+      "slot": "presetCard",
+      "manifestKey": "assets.thumbnails.presetCard",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/thumbnails/preset-card.png",
+      "publicPath": "/assets/characters/yuli-qingyi/thumbnails/preset-card.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_13 (10).png",
+      "originalCopyPath": "original/source-10.png",
+      "confidence": 0.9,
+      "reason": "order hint 10; aspect 0.8; usable resolution",
+      "generated": false,
+      "alternates": [
+        {
+          "fileName": "ChatGPT Image 2026年5月10日 23_40_11 (6).png",
+          "score": 0.26,
+          "reason": "usable resolution"
+        }
+      ]
+    },
+    "neutral": {
+      "slot": "neutral",
+      "manifestKey": "assets.portraits.neutral",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-neutral.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-neutral.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.56,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    },
+    "smile": {
+      "slot": "smile",
+      "manifestKey": "assets.portraits.smile",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-smile.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-smile.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.42,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    },
+    "thinking": {
+      "slot": "thinking",
+      "manifestKey": "assets.portraits.thinking",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-thinking.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-thinking.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.42,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    },
+    "confused": {
+      "slot": "confused",
+      "manifestKey": "assets.portraits.confused",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-confused.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-confused.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.42,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    },
+    "shy": {
+      "slot": "shy",
+      "manifestKey": "assets.portraits.shy",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-shy.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-shy.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.42,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    },
+    "annoyed": {
+      "slot": "annoyed",
+      "manifestKey": "assets.portraits.annoyed",
+      "outputPath": "D:/UserData/Desktop/Venus/public/assets/characters/yuli-qingyi/portraits/chat-annoyed.png",
+      "publicPath": "/assets/characters/yuli-qingyi/portraits/chat-annoyed.png",
+      "sourceFile": "ChatGPT Image 2026年5月10日 23_40_10 (5).png",
+      "originalCopyPath": "original/source-05.png",
+      "confidence": 0.42,
+      "reason": "fallback chat portrait generated from avatar/reference asset",
+      "fallbackFrom": "avatar",
+      "generated": false,
+      "alternates": []
+    }
+  },
+  "missingAssets": [],
+  "unusedSources": [
+    "ChatGPT Image 2026年5月10日 23_40_11 (6).png"
+  ],
+  "recommendations": [],
+  "assetMapOverride": {
+    "path": "_asset_intake/yuli-qingyi-raw/asset-map.json",
+    "used": false,
+    "warnings": []
+  }
+}

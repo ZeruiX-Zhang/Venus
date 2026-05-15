@@ -1,0 +1,45 @@
+{
+  "name": "@personal-character-agent/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@personal-character-agent/agent-core": "workspace:*",
+    "@personal-character-agent/agent-runtime": "workspace:*",
+    "@personal-character-agent/asset-generation": "workspace:*",
+    "@personal-character-agent/avatar-assets": "workspace:*",
+    "@personal-character-agent/avatar-core": "workspace:*",
+    "@personal-character-agent/avatar-model": "workspace:*",
+    "@personal-character-agent/avatar-runtime": "workspace:*",
+    "@personal-character-agent/memory-core": "workspace:*",
+    "@personal-character-agent/memory-runtime": "workspace:*",
+    "@personal-character-agent/model-gateway": "workspace:*",
+    "@personal-character-agent/persona-core": "workspace:*",
+    "@personal-character-agent/persona-runtime": "workspace:*",
+    "@personal-character-agent/safety-runtime": "workspace:*",
+    "@personal-character-agent/shared": "workspace:*",
+    "@personal-character-agent/voice-runtime": "workspace:*",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.171.0",
+    "@react-three/fiber": "^9.0.0-rc.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@types/three": "^0.171.0"
+  }
+}

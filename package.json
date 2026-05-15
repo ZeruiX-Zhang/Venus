@@ -1,0 +1,31 @@
+{
+  "name": "personal-character-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev:web": "pnpm --filter @personal-character-agent/web dev",
+    "dev:desktop": "pnpm --filter @personal-character-agent/desktop dev",
+    "dev:desktop:tauri": "pnpm --filter @personal-character-agent/desktop tauri dev",
+    "dev:cli": "pnpm --filter @personal-character-agent/cli dev",
+    "assets:import:yuli": "tsx scripts/import-character-assets.ts --character yuli-qingyi --source _asset_intake/yuli-qingyi-raw",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run scripts/import-character-assets.test.ts && pnpm -r test",
+    "lint": "pnpm -r lint",
+    "test:e2e": "playwright test tests/e2e/app.spec.ts",
+    "test:visual": "playwright test tests/e2e/visual.spec.ts",
+    "test:visual:update": "playwright test tests/e2e/visual.spec.ts --update-snapshots"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^22.10.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "sharp": "^0.34.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.gif binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.glb binary
+*.vrm binary
+
+pnpm-lock.yaml text eol=lf
+Cargo.lock text eol=lf

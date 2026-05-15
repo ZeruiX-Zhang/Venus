@@ -1,0 +1,88 @@
+{
+  "id": "yuli-qingyi",
+  "displayName": "玉璃清仪",
+  "description": "月白与浅玉绿配色的古风桌面陪伴角色，温柔、清雅、安静、知性。",
+  "styleTags": [
+    "中国古风",
+    "月白",
+    "浅玉绿",
+    "温柔",
+    "清雅",
+    "桌面陪伴",
+    "高级 3D 角色风格"
+  ],
+  "assetRoot": "/assets/characters/yuli-qingyi",
+  "assets": {
+    "stage": {
+      "fullbodyFront": "/assets/characters/yuli-qingyi/stage/fullbody-front.png",
+      "halfbody": "/assets/characters/yuli-qingyi/stage/halfbody.png",
+      "transparentFullbody": "/assets/characters/yuli-qingyi/stage/transparent-fullbody.png"
+    },
+    "reference": {
+      "turnaroundSheet": "/assets/characters/yuli-qingyi/reference/turnaround-sheet.png",
+      "materialDetails": "/assets/characters/yuli-qingyi/reference/material-details.png",
+      "actionStates": "/assets/characters/yuli-qingyi/reference/action-states.png"
+    },
+    "portraits": {
+      "avatar": "/assets/characters/yuli-qingyi/portraits/avatar.png",
+      "expressionSheet": "/assets/characters/yuli-qingyi/portraits/expression-sheet.png",
+      "neutral": "/assets/characters/yuli-qingyi/portraits/chat-neutral.png",
+      "smile": "/assets/characters/yuli-qingyi/portraits/chat-smile.png",
+      "thinking": "/assets/characters/yuli-qingyi/portraits/chat-thinking.png",
+      "confused": "/assets/characters/yuli-qingyi/portraits/chat-confused.png",
+      "shy": "/assets/characters/yuli-qingyi/portraits/chat-shy.png",
+      "annoyed": "/assets/characters/yuli-qingyi/portraits/chat-annoyed.png"
+    },
+    "thumbnails": {
+      "presetCard": "/assets/characters/yuli-qingyi/thumbnails/preset-card.png"
+    },
+    "generated": {
+      "contactSheet": "/assets/characters/yuli-qingyi/generated/contact-sheet.png",
+      "importReport": "/assets/characters/yuli-qingyi/generated/import-report.json"
+    }
+  },
+  "palette": {
+    "skin": "#F2C6AE",
+    "hair": "#111111",
+    "innerCloth": "#F6F1E7",
+    "outerCloth": "#AFC2B1",
+    "scarf": "#DDE8DD",
+    "belt": "#71836E",
+    "ornament": "#B7D8C2",
+    "embroidery": "#D7C48A"
+  },
+  "credits": {
+    "source": "user-provided-local-asset",
+    "license": "user-owned-or-authorized"
+  },
+  "importInfo": {
+    "sourceDir": "_asset_intake/yuli-qingyi-raw",
+    "generatedAt": "2026-05-10T16:03:32.962Z",
+    "mappingConfidence": {
+      "fullbodyFront": 0.99,
+      "turnaroundSheet": 0.68,
+      "transparentFullbody": 0.84,
+      "halfbody": 0.96,
+      "avatar": 0.99,
+      "expressionSheet": 0.68,
+      "actionStates": 0.68,
+      "materialDetails": 0.72,
+      "presetCard": 0.9,
+      "neutral": 0.56,
+      "smile": 0.42,
+      "thinking": 0.42,
+      "confused": 0.42,
+      "shy": 0.42,
+      "annoyed": 0.42
+    },
+    "fallbackFrom": {
+      "neutral": "avatar",
+      "smile": "avatar",
+      "thinking": "avatar",
+      "confused": "avatar",
+      "shy": "avatar",
+      "annoyed": "avatar"
+    },
+    "missingAssets": []
+  }
+}

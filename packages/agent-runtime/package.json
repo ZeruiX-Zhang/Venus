@@ -1,0 +1,36 @@
+{
+  "name": "@personal-character-agent/agent-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mastra": "./src/mastra/index.ts",
+    "./security": "./src/security/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@mastra/core": "^0.16.0",
+    "@personal-character-agent/agent-core": "workspace:*",
+    "@personal-character-agent/avatar-core": "workspace:*",
+    "@personal-character-agent/avatar-runtime": "workspace:*",
+    "@personal-character-agent/memory-core": "workspace:*",
+    "@personal-character-agent/memory-runtime": "workspace:*",
+    "@personal-character-agent/model-gateway": "workspace:*",
+    "@personal-character-agent/persona-core": "workspace:*",
+    "@personal-character-agent/persona-runtime": "workspace:*",
+    "@personal-character-agent/safety-runtime": "workspace:*",
+    "@personal-character-agent/shared": "workspace:*",
+    "zod": "3.25.75"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,1 @@
+export { PersonalityMatrixPanel } from "../CompanionDemoApp";

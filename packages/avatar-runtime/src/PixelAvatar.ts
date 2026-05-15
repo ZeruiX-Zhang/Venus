@@ -1,0 +1,1 @@
+export { renderPixelAvatar } from "./avatarStateMachine";

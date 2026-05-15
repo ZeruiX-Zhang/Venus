@@ -1,0 +1,1 @@
+export { CharacterStage } from "../CompanionDemoApp";
