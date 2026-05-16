@@ -1,137 +1,236 @@
-# Personal Character Agent
+# Personal Character Agent · 古风 AI 角色伴侣
 
-Premium local v0.4 prototype for an anime-style Personal Character Agent across web, desktop, and CLI.
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![pnpm](https://img.shields.io/badge/pnpm-monorepo-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Tests](https://img.shields.io/badge/tests-150%2B%20passing-2ea44f)](#-tests)
+[![PBT](https://img.shields.io/badge/property--based-fast--check-blueviolet)](https://github.com/dubzzz/fast-check)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
-The default runtime is `mock`, so the product can be opened and inspected without API keys. The same `CompanionRuntime` powers the web app, desktop-shaped shell, Tauri wrapper, and CLI pixel companion.
+> 一款本地优先、跨 Web / 桌面 / CLI 的中国古风 AI 角色伴侣产品。
+> 上传一张立绘,就能看到她在舞台上呼吸、眨眼、袖摆;再上传 GLB,就能切到真实 3D。
 
-The default interface language is Chinese. Open `设置` / `Settings` to switch between Chinese and English; the choice is stored locally for the next launch. The setting is also passed into runtime replies, mock generation, novel import, and newly created persona cores. Memory Skill IDs, names, and namespaces intentionally remain English because translating them would change stable internal semantics.
+[English README](#english) · [项目经历(简历用)](docs/PROJECT_EXPERIENCE.md) · [架构文档](docs/guofeng-avatar-stage.md)
 
-## Install
+---
+
+## ✨ 这是什么
+
+Personal Character Agent 是一个 TypeScript-first 的本地 AI 角色伴侣产品原型。它把"一张静态立绘 + 文本对话"扩展成:
+
+- 🎭 **古风角色舞台**:三种渲染模式(纯程序化 / 2.5D 立绘动画 / GLB 3D),按用户上传的资产自动切换
+- 🧠 **Memory-as-Skills 长期记忆**:可寻址的记忆技能注册表,而不是一锅大上下文
+- 👤 **人格矩阵**:多套人格 core,小说导入、覆写、用户自创
+- 🛡️ **未成年安全模式**:策略变更时已上传资产实时复评,被阻断的资产从渲染输出过滤
+- 🖼️ **图生 3D 适配器契约**:为 Tripo / Meshy / Hunyuan3D 类服务预留接口,Mock 适配器把整条管线先跑通
+- 🌐 **跨平台**:Web 浏览器 / Tauri 桌面悬浮宠 / 命令行像素伴侣,共享同一套 runtime
+
+---
+
+## 🪞 看一眼
+
+> 把一张古风立绘拖进资产仓库,选 12 种状态(idle / thinking / speaking / happy / sleepy …),角色立刻在舞台上反应。
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🎭 古风角色舞台                  [开发者模式] [未成年模式]    │
+│                                                              │
+│       ┌──────────────────────────────┐                       │
+│       │                              │                       │
+│       │         (你的立绘)            │  ← 呼吸 · 眨眼 · 袖摆   │
+│       │      呼吸中 · 思考时刻         │  ← 状态驱动           │
+│       │                              │                       │
+│       └──────────────────────────────┘                       │
+│                                                              │
+│  状态:[idle] [listening] [thinking] [speaking] [happy] …    │
+│                                                              │
+│  📥 资产仓库                                                  │
+│   立绘  hanfu.png  · 1.4 MB  · [设为主角]  [生成 3D]          │
+│   GLB   model.glb · 6.8 MB  · [设为主角]                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+(实际界面包含水墨粒子飘动、灯光呼吸、宋宫色彩。运行后访问 `http://localhost:5173/#/guofeng` 查看。)
+
+---
+
+## 🎯 适合谁看
+
+- **想了解 spec-driven 开发流程的工程师**:本仓库 `.kiro/specs/guofeng-avatar-stage/` 下完整保留了从需求 → 设计 → 任务 → 实现的链路。
+- **关心 property-based testing 实战的工程师**:4 条 fast-check 属性测试覆盖纯函数性、生命周期单调性、单激活不变量、源资产保留等核心契约。
+- **正在做 AI 伴侣 / VTuber / 数字人产品的团队**:一份本地优先、可插拔、安全策略闭环的参考实现。
+- **HR / 面试官**:这是 [我的项目经历](docs/PROJECT_EXPERIENCE.md) 的代码与文档佐证。
+
+---
+
+## 🚀 快速开始
 
 ```bash
 pnpm install
-```
-
-Windows fallback:
-
-```bash
-node .corepack\v1\pnpm\9.15.4\bin\pnpm.cjs install
-```
-
-## Run
-
-```bash
 pnpm dev:web
-pnpm dev:desktop
-pnpm dev:desktop:tauri
-pnpm dev:cli
 ```
 
-`dev:web` opens the browser product. `dev:desktop` opens the desktop-shaped Vite shell. `dev:desktop:tauri` runs the native wrapper when local Rust/Tauri prerequisites are installed. `dev:cli` launches the pixel companion.
+打开 `http://localhost:5173/`,点击右上角 **「前往古风舞台预览 →」**,或直接访问:
 
-## Import Local Default Character Assets
-
-The default character is `yuli-qingyi` / `玉璃清仪`. Put messy raw `.png`, `.webp`, `.jpg`, or `.jpeg` files under:
-
-```text
-_asset_intake/yuli-qingyi-raw/
+```
+http://localhost:5173/#/guofeng
 ```
 
-Then run:
+无需 API 密钥,默认 mock 模式即可完整体验。
+
+> Windows 用户如果 corepack 未配置好,可以用 `node .corepack\v1\pnpm\9.15.4\bin\pnpm.cjs install` 兜底。
+
+### 跑测试
 
 ```bash
-pnpm assets:import:yuli
-```
-
-The importer keeps originals, generates normalized product assets, writes `public/assets/characters/yuli-qingyi/manifest.json`, creates `generated/contact-sheet.png`, and records all mappings in `generated/import-report.json`. The main stage uses `stage/fullbody-front.png`, chat uses `portraits/avatar.png`, and missing files show `MissingAssetState` instead of browser broken-image icons.
-
-See [docs/LOCAL_CHARACTER_ASSET_IMPORT.md](docs/LOCAL_CHARACTER_ASSET_IMPORT.md) for the full import workflow, auto mapping rules, optional `asset-map.json`, target directory structure, and Live2D/VRM upgrade path. See [docs/LOCAL_CHARACTER_ASSETS.md](docs/LOCAL_CHARACTER_ASSETS.md) for the lower-level manifest shape.
-
-## Test And Build
-
-```bash
-pnpm typecheck
-pnpm test
+pnpm typecheck    # 19 个 workspace 项目全部通过
+pnpm test         # 150+ 测试,含 4 条 fast-check 属性
 pnpm lint
 pnpm build
-pnpm test:e2e
-pnpm test:visual
-pnpm test:visual:update
 ```
 
-Visual screenshots are environment-specific. Run `pnpm test:visual:update` intentionally when accepting new baselines, then `pnpm test:visual` to compare.
+---
 
-## What Is Inspectable In v0.4
+## 🧪 Tests
 
-- Premium dark glass UI with a first-screen character stage, chat entry, quick action cards, status, provider mode, and minor-mode indicator.
-- Chinese/English interface language setting, with Chinese as the default normal-user UI.
-- Chinese/English content-language support for mock replies, Personality Matrix cores, Novel Import generation, Memory write prompts, and Chinese safety/memory triggers.
-- Local Character Asset Pack system for the default character `yuli-qingyi` / `玉璃清仪`, with automatic intake import, `public/assets/characters/yuli-qingyi/manifest.json`, shared asset resolution, PNG/WebP/JPG/JPEG candidates, and designed missing-asset import states.
-- Character Asset Workshop / 角色资产工坊 with the default character card, local asset gallery, full-body / half-body / avatar / portrait switching, reference views, expression/action/material previews, `资产导入检查`, contact-sheet display, import-report summary, import instructions, and Developer Mode manifest JSON.
-- Asset-first character renderer with contain-fit transparent PNG/WebP support, restrained backlight, breathing/floating/speaking/memory/safety state effects, and procedural avatar fallback only when no local asset manifest or image path is available.
-- Mock chat with immediate avatar reactions, memory recall indicator, safety redirects, persona selection, traces, and voice directives.
-- Memory-as-Skills dashboard with seeded demo memories, enabled/disabled skills, always-on blocks, recall reasons, approval queue, CRUD, delete all, and export.
-- Personality Matrix with base, novel, user-created, reality-based, scene, and minor-safe cores; active state; editing; duplication; constraints; context isolation; and evaluator rules in Developer Mode.
-- Novel Import Wizard with sample excerpt, analysis, multiple candidate cores, generated constraints, evaluator previews, and save flow.
-- Safety Mode panel with minor mode toggle, blocked-content test input, safe redirection result, identity role selector, and forced `minor_safe_core` display.
-- Knowledge Source panel with local source text, keyword retrieval, retrieved knowledge display, context assembly preview, and prompt-injection warnings.
-- Voice runtime with preset selection, mock TTS, browser speech fallback, chunk preview, pitch/rate controls, test voice button, and mouth-sync events.
-- Developer Mode with traces, raw matrix, memory registry, safety profile, context assembly, audit entries, and model provider QA.
-- Developer Mode AI asset configuration for MockAssetProvider, ComfyUI, Meshy, and Tripo adapter settings.
-- Model provider QA panel with OpenAI-compatible `/chat/completions` test request, latency, status, model name, capability flags, masked key storage, and mock-safe behavior.
-- Desktop floating companion controls for compact mode, always-on-top intent, opacity, lock/peek, reset, and Tauri fallback explanation.
-- CLI pixel companion with memory, persona, minor mode, developer traces, export, and help commands.
+| 包                           | 测试数 | 重点                                      |
+|-----------------------------|------:|-------------------------------------------|
+| `avatar-runtime`            |    61 | 含 4 条 fast-check 属性测试                 |
+| `safety-runtime`            |    25 | adult / minor / strict 三模式 reason codes |
+| `ui`                        |    58 | SSR 快照 + 可访问性契约                     |
+| `agent-runtime` 等其它包      |    50+| 已有的运行时与人格矩阵测试                   |
 
-## Mock Mode
+属性测试(fast-check)覆盖:
 
-Mock mode is default and requires no key. It uses deterministic local responses, Memory-as-Skills recall, persona selection, safety checks, avatar events, trace creation, and mock voice sync.
+- **纯函数性 / 模式优先级 / 阻断闭包** — `resolveStageMode` 1000 次随机输入
+- **幂等性 / 区域边界** — `templatePortraitLayerPlanner` 1000 次随机输入
+- **总映射 / 幅度边界 / 减少动效单调性** — `stateMotionMap` + `applyReducedMotion`
+- **生命周期单调性 / 源资产保留 / 密钥门禁** — `MockImage23DAdapter`
+- **哈希唯一性 / 单激活不变量** — `AssetLibraryStore` 随机操作序列
 
-## Developer Mode
+---
 
-Normal mode hides raw internals. Developer Mode reveals provider settings, traces, recalled memory packets, raw persona cores, evaluator details, safety profile JSON, context assembly, and model provider test results.
+## 🏗️ 架构
 
-## Model Provider Setup
+```
+apps/
+├── web/         · React + Vite,主应用 + #/guofeng 古风预览路由
+├── desktop/     · Tauri webview shell,native always-on-top / opacity controls
+└── cli/         · Node.js 像素伴侣,共用同一 CompanionRuntime
 
-1. Enable Developer Mode.
-2. Open Provider.
-3. Switch mode from `mock` to `local` or `cloud`.
-4. Enter provider name, base URL, model, and API key.
-5. Save the key, then click `Test Provider`.
+packages/
+├── agent-runtime    · 确定性工作流、trace、上下文装配
+├── memory-runtime   · Memory-as-Skills 注册表、读写管线
+├── persona-runtime  · 人格矩阵、小说导入、evaluator
+├── safety-runtime   · 未成年模式、身份策略、资产安全评估
+├── avatar-runtime   · 角色状态机 + 古风舞台子系统(本次重点)
+│   └── assetLibrary/  · StageMode 解析、层规划、动效预设、资产仓库、IDB 后端、图生 3D 适配器
+├── avatar-assets    · 角色资产 manifest、验证、路径解析、玉璃清仪默认资产
+├── avatar-model     · AvatarManifest 模型、6 种古风预设
+├── asset-generation · MockAssetProvider + ComfyUI/Meshy/Tripo 适配器
+├── voice-runtime    · mock / 浏览器 TTS、嘴部同步事件
+├── model-gateway    · OpenAI 兼容 gateway、SecretStore 抽象
+└── ui               · 共享 React UI(Stage、Chat、Memory、Persona、Safety、Provider、Voice、AssetLibraryPanel、Portrait25DStage、StageInternalsPanel)
+```
 
-Provider requests use OpenAI-compatible `POST /chat/completions`. If no key is saved, mock mode remains usable and the provider test reports a recoverable missing-key result.
+---
 
-## Secure Key Storage Limits
+## 🎨 古风角色舞台 — 本次的重点子系统
 
-The model gateway now has a `SecretStore` abstraction with in-memory, browser local-development, and Tauri Stronghold adapter surfaces. Browser storage masks keys in the UI but is not equivalent to an OS keychain. Tauri Stronghold is represented as an integration adapter and must be wired to `tauri-plugin-stronghold` before production.
+### 三种渲染模式
 
-## Desktop Notes
+```
+StageMode = "procedural" | "portrait_2_5d" | "glb_3d"
+```
 
-Tauri config now attempts transparent, decoration-free desktop behavior and exposes native commands for always-on-top, decorations, opacity, and position reset. Click-through is not enabled because support is platform-specific and easy to misuse. The safe fallback is compact floating mode, opacity control, lock/unlock, hide/peek, and reset position.
+由纯函数 `resolveStageMode` 解析,优先级 GLB → 立绘 → 程序化。被安全策略阻断的资产自动跳过。
 
-## Runtime Packages
+### 关键设计
 
-- `packages/agent-runtime`: deterministic workflow, traces, safety, memory, persona, provider gateway, and context isolation.
-- `packages/memory-runtime`: Memory-as-Skills registry and read/write pipelines.
-- `packages/persona-runtime`: Personality Matrix, evaluator, and novel import.
-- `packages/safety-runtime`: minor mode, identity policy, permissions, and audit primitives.
-- `packages/avatar-assets`: local character asset manifest types, validation, path resolution, registry, default `yuli-qingyi` manifest, and asset-first React renderer.
-- `packages/avatar-model`: AvatarManifest, body/face/outfit/accessory schemas, material slots, validation, JSON import/export, and six default guofeng presets.
-- `packages/avatar-runtime`: avatar state machine, layered 2D React renderer, legacy procedural avatar, themes, motions, adapters, and CLI renderer.
-- `packages/asset-generation`: provider interface, MockAssetProvider, and future ComfyUI/Meshy/Tripo adapters for concept, turnaround, texture, and 3D draft jobs.
-- `packages/voice-runtime`: mock/browser TTS pipeline, presets, chunking, events, and mouth-sync approximation.
-- `packages/model-gateway`: mock and OpenAI-compatible provider gateway plus secret-store implementations.
-- `packages/ui`: shared React product shell and panels.
+- **2.5D 动画用纯 CSS 实现,零 canvas / 零 rAF**:把同一张 blob URL 的 `<img>` 用 7 个 `clip-path: inset(...)` 切成命名层,通过 CSS 变量驱动呼吸 / 眨眼 / 袖摆 / 水墨粒子。OS 级 `prefers-reduced-motion` 自动让全部幅度单调下降。
+- **可观察的资产仓库 + IndexedDB 持久化**:`useSyncExternalStore` 友好,SHA-256 hash 提供天然去重,rehydrate 时校验字节完整性,缺失 / 哈希不匹配的资产以 `missing` 标记保留。
+- **图生 3D 是契约,不是耦合**:任何提供方实现 `Image23DAdapter` 接口即可注册;`MockImage23DAdapter` 把 `submit → poll → succeeded` 管线打通供 demo / 测试使用。
+- **安全闭环**:`safety-runtime.createAssetSafetyEvaluator()` 在上传与策略切换时评估;`reevaluateAll(evaluators)` 在切换 adult/minor 时复评全部资产。
 
-## Not Production-Ready Yet
+### 12 种角色状态
 
-- Final imported `玉璃清仪` production art files for every slot in `public/assets/characters/yuli-qingyi/`.
-- Live2D/VRM rigging and licensed model assets.
-- Production GLB/VRM/Live2D asset binding for every AvatarManifest slot.
-- Real ComfyUI/Meshy/Tripo API execution, queue polling, cost accounting, and generated asset moderation.
-- Licensed voice resources and production visemes.
-- Tauri Stronghold or OS keychain integration validation.
-- Signed desktop installers and updater.
-- Privacy policy and legal review.
-- Real model provider cost controls and rate limits.
-- Production telemetry, crash reporting, and consent flow.
-- Real user testing and accessibility audit.
+每种状态对应一个 `MotionPreset`:`breathSeconds ∈ [2.0, 8.0]`、`floatPixels ∈ [0, 12]`、`sleeveSwayDeg ∈ [0, 6]`、`particleDensity ∈ [0, 1]`、tone tint、嘴型动画、眨眼模式。属性测试保证所有数值始终落在范围内,reduced-motion 后单调下降。
+
+详细设计见 [docs/guofeng-avatar-stage.md](docs/guofeng-avatar-stage.md)。
+
+---
+
+## 🔒 安全 & 隐私
+
+- 所有资产保存在浏览器 IndexedDB / Tauri 应用数据目录,**不上传到任何服务器**(除非你显式调用图生 3D 服务)。
+- 未成年模式拦截不支持的格式、超出大小、可能的身份冒充关键字。
+- 4 种 reason codes:`format_unsupported` / `size_exceeded` / `minor_mode_blocked` / `identity_policy_blocked`,Developer Mode 可见。
+- 模型供应商 API key 通过 `SecretStore` 抽象保存,Web 端用 masked storage,Tauri 端预留 Stronghold 适配器。
+
+---
+
+## 🛣️ 路线图
+
+- [x] 古风 2.5D 舞台 + 12 种状态动画
+- [x] GLB 上传 + three.js 渲染槽
+- [x] 图生 3D 适配器契约 + Mock 实现
+- [x] IndexedDB 资产仓库 + 哈希校验
+- [x] 未成年安全模式联动
+- [x] 开发者模式调试面板
+- [ ] Tauri Stronghold 真实集成
+- [ ] 真实图生 3D 提供方(Tripo / Meshy / Hunyuan3D)适配器包
+- [ ] Live2D Cubism 输入桥
+- [ ] Playwright 视觉回归种子图
+- [ ] 已签名的桌面安装包
+
+---
+
+## 🤝 参与
+
+```bash
+pnpm install
+pnpm dev:web
+```
+
+任何修改请确保:
+
+```bash
+pnpm typecheck && pnpm test && pnpm lint && pnpm build
+```
+
+仓库根目录的 [AGENTS.md](AGENTS.md) 是给协作者(包括 AI agent)的契约文档,涵盖代码风格、安全规则、Definition of Done。
+
+---
+
+## 📄 License
+
+MIT — 见 [LICENSE](LICENSE)(若仓库尚未添加 LICENSE,请视为预留)。
+
+第三方资源(默认角色 `玉璃清仪` 立绘等)版权归原作者,本仓库仅作演示用途。
+
+---
+
+## English
+
+**Personal Character Agent** is a local-first, TypeScript-strict AI character companion product across Web / Desktop / CLI, themed around classical Chinese aesthetics (古风).
+
+**Highlights**
+
+- 🎭 **Three rendering modes** — procedural fallback, 2.5D portrait stage (pure CSS, no canvas), GLB 3D (three.js / `@react-three/fiber`), dispatched by a pure-functional `resolveStageMode`.
+- 🧠 **Memory-as-Skills** registry instead of one giant prompt blob.
+- 🛡️ **Minor-safe mode** with re-evaluation on profile change.
+- 🖼️ **Pluggable image-to-3D adapter** contract for Tripo / Meshy / Hunyuan3D-class services; `MockImage23DAdapter` ships out of the box.
+- 🧪 **150+ tests** including 4 fast-check property suites covering purity, lifecycle monotonicity, single-active invariants, and hash uniqueness.
+- 🌐 Web + Tauri desktop floating pet + Node.js CLI pixel companion, shared runtime.
+
+**Quick start**
+
+```bash
+pnpm install
+pnpm dev:web
+# then open http://localhost:5173/#/guofeng
+```
+
+Drag in a hanfu illustration. Watch it breathe and blink. Switch to minor-safe mode and see uploads get rejected with calm reasoning. Open Developer Mode to inspect resolved stage mode, layer plan, motion preset, adapter status, and recent events.
+
+**Repository layout** is a pnpm monorepo with 19 workspace projects. Architecture and contracts are documented in [docs/guofeng-avatar-stage.md](docs/guofeng-avatar-stage.md). Project résumé text in Chinese and English is at [docs/PROJECT_EXPERIENCE.md](docs/PROJECT_EXPERIENCE.md).
