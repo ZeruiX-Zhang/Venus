@@ -1,6 +1,7 @@
 import type { AvatarEventBus } from "@personal-character-agent/avatar-core/events";
 import { AvatarRuntime } from "@personal-character-agent/avatar-runtime";
-import type { MemoryStore } from "@personal-character-agent/memory-core";
+import type { MemoryStore, MemoryExtractor, MemoryReranker, MemoryLifecycleManager } from "@personal-character-agent/memory-core";
+import { LlmMemoryExtractor, LlmMemoryReranker, DefaultMemoryLifecycleManager } from "@personal-character-agent/memory-core";
 import {
   assembleMemoryContext,
   createMemoryWriteSuggestions,
@@ -81,6 +82,9 @@ export interface CompanionRuntimeOptions {
   auditLog?: AuditLog;
   permissionPolicy?: PermissionPolicy;
   mastraRuntime?: MastraRuntime;
+  memoryExtractor?: MemoryExtractor;
+  memoryReranker?: MemoryReranker;
+  memoryLifecycleManager?: MemoryLifecycleManager;
 }
 
 export interface CompanionRuntimeStatus {
@@ -131,6 +135,9 @@ export class CompanionRuntime {
   private readonly avatarRuntime: AvatarRuntime;
   private readonly modelGateway: ModelGateway;
   private readonly gatewaySecretStore: GatewaySecretStore;
+  private readonly memoryExtractor?: MemoryExtractor;
+  private readonly memoryReranker?: MemoryReranker;
+  private readonly memoryLifecycleManager?: MemoryLifecycleManager;
   private config: RuntimeConfig;
   private safetyProfile: SafetyProfile;
   private personalityMatrix: PersonalityMatrix;
@@ -191,6 +198,24 @@ export class CompanionRuntime {
     };
     this.options.soulCard = soulCard;
     this.options.characterProfile = characterProfile;
+
+    // cloud 模式下自动创建 memory-core 增强模块
+    const modelClient = this.config.modelClient;
+    if (options.memoryExtractor) {
+      this.memoryExtractor = options.memoryExtractor;
+    } else if (this.config.mode === "cloud" && options.memoryStore && modelClient) {
+      this.memoryExtractor = new LlmMemoryExtractor(modelClient);
+    }
+    if (options.memoryReranker) {
+      this.memoryReranker = options.memoryReranker;
+    } else if (this.config.mode === "cloud" && options.memoryStore && modelClient) {
+      this.memoryReranker = new LlmMemoryReranker(modelClient);
+    }
+    if (options.memoryLifecycleManager) {
+      this.memoryLifecycleManager = options.memoryLifecycleManager;
+    } else if (options.memoryStore) {
+      this.memoryLifecycleManager = new DefaultMemoryLifecycleManager(options.memoryStore);
+    }
   }
 
   async sendMessage(message: string): Promise<AgentWorkflowResult> {
@@ -364,6 +389,26 @@ export class CompanionRuntime {
       }
       memoryContext = await runStep("context_assembly", "Assemble isolated context", () => assembleMemoryContext(recalledPackets));
 
+      // memory-core 增强检索：从 MemoryStore 搜索 + LLM rerank
+      if (this.options.memoryStore) {
+        const coreMemories = await runStep(
+          "memory_core_retrieval",
+          "Search memory-core store",
+          async () => {
+            const candidates = await this.options.memoryStore!.searchMemories(normalizedInput, { limit: 20 });
+            if (candidates.length === 0) return [];
+            if (this.memoryReranker) {
+              return this.memoryReranker.rerank(normalizedInput, candidates, 8);
+            }
+            return candidates.slice(0, 8);
+          },
+          normalizedInput
+        );
+        if (coreMemories.length > 0) {
+          memoryContext += "\n\n" + this.formatCoreMemories(coreMemories);
+        }
+      }
+
       toolActions = await runStep("action_planning", "Plan safe actions", () => planSafeActions(normalizedInput, this.config.developerMode));
 
       const gatewaySettings = this.gatewaySettings();
@@ -436,6 +481,11 @@ export class CompanionRuntime {
       }
       if (memoryWriteSuggestions.some((suggestion) => suggestion.status === "saved")) {
         emit("MEMORY_SAVED", "Memory saved");
+      }
+
+      // memory-core 自动提取：用 LLM 从对话中提取记忆，异步保存到 MemoryStore
+      if (this.memoryExtractor && this.options.memoryStore) {
+        void this.extractAndSaveCoreMemories(normalizedInput, text).catch(() => {});
       }
 
       emit("RESPONSE_FINISHED");
@@ -780,6 +830,62 @@ export class CompanionRuntime {
     return this.config.responseLanguage === "zh"
       ? `${this.soulCard.character_name}：${zh}`
       : `${this.soulCard.character_name}: ${en}`;
+  }
+
+  // memory-core 记忆提取：从对话中提取事实，保存到 MemoryStore
+  private async extractAndSaveCoreMemories(userMessage: string, assistantReply: string): Promise<void> {
+    if (!this.memoryExtractor || !this.options.memoryStore) return;
+    const existing = await this.options.memoryStore.listMemories();
+    const extracted = await this.memoryExtractor.extract(userMessage, assistantReply, existing);
+    for (const mem of extracted) {
+      await this.options.memoryStore.addMemory({
+        type: mem.type,
+        content: mem.content,
+        importance: mem.importance,
+        source: "assistant",
+        userEditable: true,
+        tags: mem.tags
+      });
+    }
+  }
+
+  // 把 memory-core 检索结果格式化为 prompt 上下文
+  private formatCoreMemories(memories: import("@personal-character-agent/shared").MemoryItem[]): string {
+    if (memories.length === 0) return "";
+    const grouped: Record<string, string[]> = {};
+    for (const m of memories) {
+      const key = m.type;
+      if (!grouped[key]) grouped[key] = [];
+      const age = this.timeAgo(m.updatedAt);
+      grouped[key]!.push(`- ${m.content} (${age})`);
+    }
+    return Object.entries(grouped)
+      .map(([type, lines]) => `[${type}]\n${lines.join("\n")}`)
+      .join("\n\n");
+  }
+
+  private timeAgo(isoDate: string): string {
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
+
+  // 公开方法：会话结束时清理临时记忆
+  async cleanupSessionMemories(sessionId: string): Promise<number> {
+    if (!this.memoryLifecycleManager) return 0;
+    return this.memoryLifecycleManager.onSessionEnd(sessionId);
+  }
+
+  // 公开方法：执行容量淘汰 + 去重
+  async runMemoryMaintenance(): Promise<{ evicted: number; deduplicated: number }> {
+    if (!this.memoryLifecycleManager) return { evicted: 0, deduplicated: 0 };
+    const evicted = (await this.memoryLifecycleManager.enforceCapacity()).length;
+    const deduplicated = await this.memoryLifecycleManager.deduplicateMemories();
+    return { evicted, deduplicated };
   }
 }
 
