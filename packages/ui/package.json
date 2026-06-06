@@ -31,11 +31,12 @@
     "@personal-character-agent/safety-runtime": "workspace:*",
     "@personal-character-agent/shared": "workspace:*",
     "@personal-character-agent/voice-runtime": "workspace:*",
+    "@react-three/fiber": "^9.0.0-rc.4",
     "lucide-react": "^0.468.0",
+    "meshoptimizer": "^1.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.171.0",
-    "@react-three/fiber": "^9.0.0-rc.4"
+    "three": "^0.171.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.2",

@@ -51,6 +51,9 @@
     "ornament": "#B7D8C2",
     "embroidery": "#D7C48A"
   },
+  "runtimeAssets": {
+    "glb": "/assets/characters/yuli-qingyi/3d/yuli-qingyi.glb"
+  },
   "credits": {
     "source": "user-provided-local-asset",
     "license": "user-owned-or-authorized"

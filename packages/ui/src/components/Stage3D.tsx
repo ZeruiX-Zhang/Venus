@@ -2,6 +2,7 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "meshoptimizer";
 import {
   resolveCharacterAssetPath,
   type CharacterAssetManifest
@@ -168,29 +169,42 @@ function GLBCharacter({
   memoryActive: boolean;
   safetyActive: boolean;
 }) {
-  const gltf = useLoader(GLTFLoader, glbPath);
   const groupRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  const [scene, setScene] = useState<THREE.Group | null>(null);
 
+  // 手动加载 GLB，注册 meshopt decoder 支持压缩模型
   useEffect(() => {
-    if (!gltf.scene) return;
-    gltf.scene.traverse((child) => {
-      const obj = child as THREE.Mesh;
-      if (obj.isMesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
+    const loader = new GLTFLoader();
+    loader.setMeshoptDecoder(MeshoptDecoder);
+    loader.load(
+      glbPath,
+      (gltf) => {
+        gltf.scene.traverse((child) => {
+          const obj = child as THREE.Mesh;
+          if (obj.isMesh) {
+            obj.castShadow = true;
+            obj.receiveShadow = true;
+          }
+        });
+        // 如果模型自带 idle 动画就播放
+        const idle =
+          gltf.animations.find((c) => /idle|stand|breath/i.test(c.name)) ??
+          gltf.animations[0];
+        if (idle) {
+          mixerRef.current = new THREE.AnimationMixer(gltf.scene);
+          mixerRef.current.clipAction(idle).play();
+        }
+        setScene(gltf.scene);
+      },
+      undefined,
+      (err) => {
+        console.error("GLB load failed:", err);
       }
-    });
-    const idle =
-      gltf.animations.find((c) => /idle|stand|breath/i.test(c.name)) ??
-      gltf.animations[0];
-    if (idle) {
-      mixerRef.current = new THREE.AnimationMixer(gltf.scene);
-      mixerRef.current.clipAction(idle).play();
-    }
-  }, [gltf]);
+    );
+  }, [glbPath]);
 
-  useFrame((three, delta) => {
+  useFrame((_three, delta) => {
     mixerRef.current?.update(delta);
     if (!groupRef.current) return;
     const gx = gazeRef.current.x;
@@ -202,14 +216,15 @@ function GLBCharacter({
     );
   });
 
-  // sentinel — keeps memory/safety tints in line w/ billboard path even though
-  // GLB materials own their own albedo. We just nudge environment intensity below.
+  // sentinel — keeps memory/safety tints in line w/ billboard path
   void memoryActive;
   void safetyActive;
 
+  if (!scene) return null;
+
   return (
     <group ref={groupRef} position={[0, -2, 0]} scale={1.5}>
-      <primitive object={gltf.scene} />
+      <primitive object={scene} />
     </group>
   );
 }

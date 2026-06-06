@@ -363,6 +363,9 @@ importers:
       lucide-react:
         specifier: ^0.468.0
         version: 0.468.0(react@19.2.5)
+      meshoptimizer:
+        specifier: ^1.1.1
+        version: 1.1.1
       react:
         specifier: ^19.0.0
         version: 19.2.5
@@ -2639,6 +2642,9 @@ packages:
 
   meshoptimizer@0.18.1:
     resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
+
+  meshoptimizer@1.1.1:
+    resolution: {integrity: sha512-oRFNWJRDA/WTrVj7NWvqa5HqE1t9MYDj2VaWirQCzCCrAd2GHrqR/sQezCxiWATPNlKTcRaPRHPJwIRoPBAp5g==}
 
   methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
@@ -5545,6 +5551,8 @@ snapshots:
   merge-descriptors@1.0.3: {}
 
   meshoptimizer@0.18.1: {}
+
+  meshoptimizer@1.1.1: {}
 
   methods@1.1.2: {}
 
