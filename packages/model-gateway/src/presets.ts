@@ -42,9 +42,10 @@ const presetDefinitions: Record<Exclude<ModelProviderPresetId, "openai-compatibl
     label: "DeepSeek",
     providerName: "DeepSeek",
     baseUrl: "https://api.deepseek.com/v1",
-    chatModel: "deepseek-chat",
+    chatModel: "deepseek-v4-flash",
     voiceModel: "companion-voice-fallback-v0.4",
-    capabilities: sharedTextCapabilities
+    capabilities: sharedTextCapabilities,
+    availableModels: ["deepseek-v4-flash", "deepseek-v4-pro"]
   },
   minimax: {
     id: "minimax",

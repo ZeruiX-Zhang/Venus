@@ -30,6 +30,7 @@ export interface ModelProviderPreset {
   chatModel: string;
   voiceModel: string;
   capabilities: ModelCapabilityFlags;
+  availableModels?: string[];
 }
 
 export interface ModelCapabilityFlags {

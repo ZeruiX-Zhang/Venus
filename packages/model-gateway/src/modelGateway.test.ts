@@ -47,7 +47,7 @@ describe("Model Gateway", () => {
     });
     expect(createProviderPresetSettings("deepseek")).toMatchObject({
       providerName: "DeepSeek",
-      model: "deepseek-chat",
+      model: "deepseek-v4-flash",
       voiceModel: "companion-voice-fallback-v0.4"
     });
     expect(createProviderPresetSettings("minimax")).toMatchObject({

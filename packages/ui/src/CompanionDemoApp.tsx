@@ -831,6 +831,7 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
   const [secretStore] = useState<SecretStore>(() => createBestAvailableSecretStore());
   const [secretMetadata, setSecretMetadata] = useState<StoredSecretMetadata>();
   const [providerKeyInput, setProviderKeyInput] = useState("");
+  const [settingsApiKeyInput, setSettingsApiKeyInput] = useState("");
   const [providerTestResult, setProviderTestResult] = useState<ProviderTestResult>();
   const [memoryWriteMode, setMemoryWriteMode] = useState<MemoryWriteMode>("ask");
   const [developerMode, setDeveloperMode] = useState(false);
@@ -1961,6 +1962,13 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
               setActiveView("provider");
             }}
             onSetMode={setMode}
+            apiKeyInput={settingsApiKeyInput}
+            onChangeApiKeyInput={setSettingsApiKeyInput}
+            onSaveApiKey={(key) => {
+              setProviderSettings((current) => setProviderApiKey(current, key));
+              setSettingsApiKeyInput("");
+              addAudit("API key saved via Settings panel", "good");
+            }}
           />
         )}
         {activeView === "developer" && developerMode && (
@@ -3478,7 +3486,10 @@ function SettingsPanel({
   onChangeLanguage,
   onChangeProviderSettings,
   onOpenProvider,
-  onSetMode
+  onSetMode,
+  onSaveApiKey,
+  apiKeyInput,
+  onChangeApiKeyInput
 }: {
   copy: CompanionCopy;
   language: LocaleCode;
@@ -3488,6 +3499,9 @@ function SettingsPanel({
   onChangeProviderSettings: (settings: ModelProviderSettings) => void;
   onOpenProvider: () => void;
   onSetMode: (mode: SafetyMode) => void;
+  onSaveApiKey?: (key: string) => void;
+  apiKeyInput?: string;
+  onChangeApiKeyInput?: (value: string) => void;
 }) {
   const isZh = language === "zh";
   const applyPreset = (presetId: ModelProviderPresetId) => {
@@ -3496,6 +3510,8 @@ function SettingsPanel({
       mode: "cloud"
     });
   };
+  const activePreset = providerPresets.find((p) => p.id === providerSettings.presetId);
+  const availableModels = activePreset?.availableModels;
   return (
     <div className="pca-view">
       <header className="pca-view__header">
@@ -3535,10 +3551,45 @@ function SettingsPanel({
               type="button"
             >
               <strong>{preset.label}</strong>
-              <small>{preset.chatModel} / {preset.voiceModel}</small>
+              <small>{preset.chatModel}</small>
             </button>
           ))}
         </div>
+        {availableModels && availableModels.length > 1 && (
+          <label className="pca-field">
+            <span>{isZh ? "选择模型" : "Select model"}</span>
+            <select
+              onChange={(event) => onChangeProviderSettings({ ...providerSettings, model: event.target.value, chatModel: event.target.value })}
+              value={providerSettings.chatModel ?? providerSettings.model}
+            >
+              {availableModels.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </label>
+        )}
+        <label className="pca-field">
+          <span>API Key</span>
+          <div className="pca-settings-row">
+            <input
+              onChange={(event) => onChangeApiKeyInput?.(event.target.value)}
+              placeholder={isZh ? "输入 API 密钥..." : "Enter API key..."}
+              type="password"
+              value={apiKeyInput ?? ""}
+            />
+            <button
+              onClick={() => {
+                if (apiKeyInput?.trim() && onSaveApiKey) {
+                  onSaveApiKey(apiKeyInput.trim());
+                }
+              }}
+              type="button"
+            >
+              <Save size={17} />
+              <span>{isZh ? "保存" : "Save"}</span>
+            </button>
+          </div>
+        </label>
         <div className="pca-dev-grid">
           <label className="pca-field">
             <span>{isZh ? "提供商" : "Provider"}</span>
@@ -3559,7 +3610,7 @@ function SettingsPanel({
         </div>
         <button onClick={onOpenProvider} type="button">
           <Database size={17} />
-          <span>{isZh ? "打开密钥和连接测试" : "Open keys and connection test"}</span>
+          <span>{isZh ? "高级设置与连接测试" : "Advanced settings and connection test"}</span>
         </button>
       </InspectorPanel>
     </div>
