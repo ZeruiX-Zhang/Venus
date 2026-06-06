@@ -91,19 +91,48 @@ export class LocalJsonMemoryStore implements MemoryStore {
     );
   }
 
-  async searchMemories(query: string): Promise<MemoryItem[]> {
+  async searchMemories(
+    query: string,
+    options?: { limit?: number }
+  ): Promise<MemoryItem[]> {
     await this.ensureInitialized();
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) {
       return this.listMemories();
     }
 
-    return this.items
-      .filter((item) => {
-        const haystack = `${item.type} ${item.content} ${item.tags.join(" ")}`.toLowerCase();
-        return haystack.includes(normalizedQuery);
-      })
-      .sort((a, b) => b.importance - a.importance);
+    const tokens = normalizedQuery
+      .split(/[\s,，。！？、;；：:]+/)
+      .filter((t) => t.length > 1);
+
+    if (tokens.length === 0) {
+      return this.listMemories();
+    }
+
+    const scored = this.items
+      .map((item) => ({
+        item,
+        score: this.relevanceScore(item, tokens)
+      }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    const limit = options?.limit ?? 20;
+    return scored.slice(0, limit).map(({ item }) => item);
+  }
+
+  private relevanceScore(item: MemoryItem, queryTokens: string[]): number {
+    let score = 0;
+    const content = item.content.toLowerCase();
+    const tags = item.tags.map((t) => t.toLowerCase());
+
+    for (const token of queryTokens) {
+      if (content.includes(token)) score += 1;
+      if (tags.some((tag) => tag.includes(token))) score += 2;
+    }
+
+    score += item.importance * 0.5;
+    return score;
   }
 
   async updateMemory(

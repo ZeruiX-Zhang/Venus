@@ -5,7 +5,7 @@ export interface MemoryStore {
     input: Omit<MemoryItem, "id" | "createdAt" | "updatedAt">
   ): Promise<MemoryItem>;
   listMemories(): Promise<MemoryItem[]>;
-  searchMemories(query: string): Promise<MemoryItem[]>;
+  searchMemories(query: string, options?: { limit?: number }): Promise<MemoryItem[]>;
   updateMemory(
     id: string,
     patch: Partial<Omit<MemoryItem, "id" | "createdAt">>
