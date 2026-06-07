@@ -19,6 +19,10 @@ import {
 } from "@personal-character-agent/avatar-assets";
 import { CharacterAssetRenderer } from "@personal-character-agent/avatar-assets/react";
 import { Stage3D } from "./components/Stage3D";
+import { WindowControls } from "./components/WindowControls";
+import { GamesPanel } from "./components/GamesPanel";
+import { saveCustomModel, loadCustomModel, clearCustomModel } from "./lib/modelStorage";
+import { playCharacterClip } from "./lib/animationBus";
 import {
   createDefaultPixelPortrait,
   parsePixelPortrait,
@@ -111,12 +115,14 @@ import {
   Activity,
   AlertTriangle,
   BookOpen,
+  Box,
   Brain,
   Check,
   ChevronRight,
   Clipboard,
   Code2,
   Database,
+  Dices,
   Download,
   Eye,
   FileText,
@@ -126,6 +132,7 @@ import {
   Layers3,
   MessageCircle,
   Mic2,
+  Monitor,
   Moon,
   Pause,
   Pencil,
@@ -139,6 +146,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  Upload,
   UserCog,
   Volume2,
   Wand2,
@@ -154,10 +162,7 @@ import {
   type ReactNode
 } from "react";
 import { AppShell } from "./components/AppShell";
-import {
-  AvatarAssetDeveloperConfigPanel,
-  AvatarStudioPanel
-} from "./components/AvatarStudio";
+import { AvatarAssetDeveloperConfigPanel } from "./components/AvatarStudio";
 import { EmptyState } from "./components/EmptyState";
 import { InspectorPanel } from "./components/InspectorPanel";
 import { StatusPill } from "./components/StatusPill";
@@ -166,6 +171,7 @@ import { ToggleCard } from "./components/ToggleCard";
 type ActiveView =
   | "home"
   | "chat"
+  | "games"
   | "memory"
   | "persona"
   | "import"
@@ -258,6 +264,7 @@ interface CompanionCopy {
   navChat: string;
   navDesktop: string;
   navDeveloper: string;
+  navGames: string;
   navHome: string;
   navImport: string;
   navKnowledge: string;
@@ -399,11 +406,12 @@ const companionCopy: Record<LocaleCode, CompanionCopy> = {
     navChat: "论道",
     navDesktop: "桌前",
     navDeveloper: "观道",
+    navGames: "雅趣",
     navHome: "道场",
     navImport: "话本",
     navKnowledge: "卷宗",
     navMemory: "神识",
-    navModel: "容相阁",
+    navModel: "形象",
     navPersona: "记忆",
     navProvider: "仙缘",
     navSafety: "护道",
@@ -504,11 +512,12 @@ const companionCopy: Record<LocaleCode, CompanionCopy> = {
     navChat: "Talk",
     navDesktop: "Desktop",
     navDeveloper: "Developer",
+    navGames: "Play",
     navHome: "Home",
     navImport: "Import",
     navKnowledge: "Knowledge",
     navMemory: "Memory",
-    navModel: "Studio",
+    navModel: "Avatar",
     navPersona: "Matrix",
     navProvider: "Provider",
     navSafety: "Safety",
@@ -752,22 +761,26 @@ const viewItems: Array<{
     | "navDesktop"
     | "navSettings"
     | "navModel"
+    | "navGames"
     | "navDeveloper"
     | "navProvider"
   >;
   icon: typeof MessageCircle;
   developerOnly?: boolean;
 }> = [
+  // —— 用户主线：陪伴 / 论道 / 小说人物 / 形象 / 玩一玩 / 设置 ——
   { id: "home", labelKey: "navHome", icon: Home },
   { id: "chat", labelKey: "navChat", icon: MessageCircle },
-  { id: "memory", labelKey: "navMemory", icon: Brain },
-  { id: "persona", labelKey: "navPersona", icon: UserCog },
   { id: "import", labelKey: "navImport", icon: BookOpen },
   { id: "model", labelKey: "navModel", icon: Sparkles },
-  { id: "voice", labelKey: "navVoice", icon: Mic2 },
-  { id: "knowledge", labelKey: "navKnowledge", icon: Layers3 },
-  { id: "desktop", labelKey: "navDesktop", icon: Moon },
+  { id: "games", labelKey: "navGames", icon: Dices },
   { id: "settings", labelKey: "navSettings", icon: Settings },
+  // —— 以下为高级/开发者面板，默认隐藏，开启开发者模式后可见 ——
+  { id: "memory", labelKey: "navMemory", icon: Brain, developerOnly: true },
+  { id: "persona", labelKey: "navPersona", icon: UserCog, developerOnly: true },
+  { id: "voice", labelKey: "navVoice", icon: Mic2, developerOnly: true },
+  { id: "knowledge", labelKey: "navKnowledge", icon: Layers3, developerOnly: true },
+  { id: "desktop", labelKey: "navDesktop", icon: Moon, developerOnly: true },
   { id: "safety", labelKey: "navSafety", icon: ShieldCheck, developerOnly: true },
   { id: "developer", labelKey: "navDeveloper", icon: Code2, developerOnly: true },
   { id: "provider", labelKey: "navProvider", icon: Database, developerOnly: true }
@@ -843,6 +856,8 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
   const [ambientSpeech, setAmbientSpeech] = useState<AmbientSpeech | undefined>(undefined);
   const [characterAssetManifest, setCharacterAssetManifest] =
     useState<CharacterAssetManifest>(() => yuliQingyiManifest);
+  // 用户上传的自定义模型的临时 URL（object URL）；null 表示用默认模型
+  const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
   const [assetGenerationConfig, setAssetGenerationConfig] = useState<AssetGenerationConfig>(() =>
     createDefaultAssetGenerationConfig()
   );
@@ -866,6 +881,63 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
       cancelled = true;
     };
   }, []);
+
+  // 启动时从 IndexedDB 加载上次上传的模型，转成 object URL 供 Three.js 加载
+  useEffect(() => {
+    let url: string | null = null;
+    void loadCustomModel()
+      .then((blob) => {
+        if (blob) {
+          url = URL.createObjectURL(blob);
+          setCustomModelUrl(url);
+        }
+      })
+      .catch(() => {
+        // 读取失败就忽略，用默认模型
+      });
+    // 组件卸载时释放 object URL，避免内存泄漏
+    return () => {
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, []);
+
+  // 有上传模型时，用它覆盖 manifest 的 glb 字段；这样所有读取 manifest 的地方（舞台/小窗/桌面）都会用上传的模型
+  const effectiveManifest = useMemo<CharacterAssetManifest>(() => {
+    if (!customModelUrl) return characterAssetManifest;
+    return {
+      ...characterAssetManifest,
+      runtimeAssets: {
+        ...characterAssetManifest.runtimeAssets,
+        glb: customModelUrl
+      }
+    };
+  }, [characterAssetManifest, customModelUrl]);
+
+  // 处理用户选择的模型文件：存进 IndexedDB + 立即生效
+  const handleUploadModel = async (file: File): Promise<void> => {
+    await saveCustomModel(file);
+    setCustomModelUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev); // 释放旧的
+      return URL.createObjectURL(file);
+    });
+  };
+
+  // 删除上传的模型，恢复默认
+  const handleResetModel = async (): Promise<void> => {
+    await clearCustomModel();
+    setCustomModelUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+  };
+
+  // 预览桌宠：新开一个小窗只显示模型。
+  // 桌面版（Tauri）会在启动时自动弹出独立透明置顶的桌宠窗口（见 tauri.conf.json），
+  // 这个按钮主要用于在浏览器里预览桌宠效果。
+  const openDesktopPet = (): void => {
+    const petUrl = `${window.location.origin}${window.location.pathname}?pet=1`;
+    window.open(petUrl, "venus-pet", "width=360,height=480");
+  };
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -1061,6 +1133,8 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
 
   const triggerEmote = (emote: CharacterEmote, source: "user" | "assistant" = "assistant") => {
     const { label, line } = getEmoteCopy(emote, language);
+    // 通知舞台 3D 模型播放该表情对应的骨骼动画片段
+    playCharacterClip(emote.clipIndex);
     setAvatarState(emote.avatarState);
     setAmbientSpeech({
       id: makeId("ambient"),
@@ -1643,6 +1717,10 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
 
   return (
     <AppShell variant={variant}>
+      {/* 桌面端：顶部细条用于拖动无边框窗口 */}
+      {variant === "desktop" && <div className="pca-titlebar" data-tauri-drag-region aria-hidden="true" />}
+      {/* 窗口控制按钮（最小化/关闭），仅 Tauri 桌面端显示 */}
+      <WindowControls />
       <aside className="pca-sidebar">
         <div className="pca-brand">
           <span className="pca-brand__mark"><Sparkles size={18} /></span>
@@ -1700,7 +1778,7 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
         <CharacterStage
           avatarManifest={avatarManifest}
           avatarState={avatarState}
-          characterAssetManifest={characterAssetManifest}
+          characterAssetManifest={effectiveManifest}
           copy={copy}
           displayStyle={stageDisplayStyle}
           gaze={gaze}
@@ -1721,7 +1799,7 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
         />
         <StageChatDock
           avatarState={avatarState}
-          characterAssetManifest={characterAssetManifest}
+          characterAssetManifest={effectiveManifest}
           draftMessage={draftMessage}
           language={language}
           messages={messages}
@@ -1757,7 +1835,7 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
         {activeView === "chat" && (
           <ChatPanel
             avatarState={avatarState}
-            characterAssetManifest={characterAssetManifest}
+            characterAssetManifest={effectiveManifest}
             copy={copy}
             language={language}
             developerMode={developerMode}
@@ -1776,6 +1854,9 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
             onQuickSend={(text) => void sendMessage(text)}
             onSend={() => void sendMessage()}
           />
+        )}
+        {activeView === "games" && (
+          <GamesPanel characterName={characterAssetManifest.displayName} isZh={language === "zh"} />
         )}
         {activeView === "memory" && (
           <MemorySkillPanel
@@ -1840,18 +1921,12 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
           />
         )}
         {activeView === "model" && (
-          <AvatarStudioPanel
-            assetConfig={assetGenerationConfig}
-            characterAssetManifest={characterAssetManifest}
-            developerMode={developerMode}
-            manifest={avatarManifest}
-            displayStyle={stageDisplayStyle}
-            pixelPortrait={pixelPortrait}
-            onApplyCharacterAsset={setCharacterAssetManifest}
-            onChangeDisplayStyle={setStageDisplayStyle}
-            onChangePixelPortrait={setPixelPortrait}
-            onChangeManifest={setAvatarManifest}
-            onPreviewState={setAvatarState}
+          <ModelUploadPanel
+            isZh={language === "zh"}
+            hasCustomModel={Boolean(customModelUrl)}
+            onUpload={handleUploadModel}
+            onReset={handleResetModel}
+            onOpenDesktopPet={openDesktopPet}
           />
         )}
         {activeView === "import" && (
@@ -1937,7 +2012,7 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
         {activeView === "desktop" && (
           <FloatingCompanionControls
             avatarState={avatarState}
-            characterAssetManifest={characterAssetManifest}
+            characterAssetManifest={effectiveManifest}
             copy={copy}
             desktopState={desktopState}
             displayStyle={stageDisplayStyle}
@@ -2012,6 +2087,96 @@ function CompanionProductApp({ variant }: CompanionDemoAppProps) {
   );
 }
 
+// 模型上传面板：单一主入口。上传 GLB → 全局生效 + 可在桌面独立显示
+function ModelUploadPanel({
+  isZh,
+  hasCustomModel,
+  onUpload,
+  onReset,
+  onOpenDesktopPet
+}: {
+  isZh: boolean;
+  hasCustomModel: boolean;
+  onUpload: (file: File) => Promise<void>;
+  onReset: () => Promise<void>;
+  onOpenDesktopPet: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 处理文件选择
+  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // 清空，允许重复选同一文件
+    if (!file) return;
+    // 只接受 .glb（单文件二进制，贴图内嵌；.gltf 多文件无法用单个 blob 加载）
+    if (!file.name.toLowerCase().endsWith(".glb")) {
+      setError(isZh ? "请上传 .glb 格式的模型文件" : "Please upload a .glb file");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await onUpload(file);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="pca-view">
+      <header className="pca-view__header">
+        <Box size={20} />
+        <div>
+          <h1>{isZh ? "形象模型" : "Character Model"}</h1>
+          <p>{isZh ? "上传一个 3D 模型，全局生效，也可独立显示在桌面。" : "Upload a 3D model used everywhere, also shown on desktop."}</p>
+        </div>
+      </header>
+      <InspectorPanel title={isZh ? "上传模型" : "Upload model"}>
+        <div className="pca-model-upload">
+          <div className="pca-model-upload__status">
+            {hasCustomModel
+              ? (isZh ? "✅ 已使用你上传的模型" : "✅ Using your uploaded model")
+              : (isZh ? "当前使用默认模型" : "Using default model")}
+          </div>
+          <div className="pca-model-upload__actions">
+            {/* label 包住 input：点击触发文件选择，input 隐藏 */}
+            <label className="pca-btn pca-btn--primary" aria-disabled={busy}>
+              <Upload size={16} />
+              <span>{busy ? (isZh ? "上传中…" : "Uploading…") : (isZh ? "选择 GLB 模型" : "Choose GLB model")}</span>
+              <input
+                type="file"
+                accept=".glb"
+                style={{ display: "none" }}
+                disabled={busy}
+                onChange={handleFile}
+              />
+            </label>
+            {hasCustomModel && (
+              <button type="button" className="pca-btn" onClick={() => void onReset()} disabled={busy}>
+                <RotateCcw size={16} />
+                <span>{isZh ? "恢复默认" : "Reset to default"}</span>
+              </button>
+            )}
+            <button type="button" className="pca-btn" onClick={onOpenDesktopPet}>
+              <Monitor size={16} />
+              <span>{isZh ? "预览桌宠" : "Preview pet"}</span>
+            </button>
+          </div>
+          {error && <div className="pca-model-upload__status" style={{ color: "#c0392b" }}>{error}</div>}
+          <p className="pca-model-upload__hint">
+            {isZh
+              ? "支持 .glb 格式（贴图需内嵌）。模型会自动居中缩放，全局生效。点「预览桌宠」可在浏览器小窗只看模型；桌面版（Tauri）启动时会自动弹出一个透明置顶的独立桌宠窗口。模型保存在本地浏览器，不会上传服务器。"
+              : "Supports .glb (embedded textures). Auto-centered & scaled, used everywhere. 'Preview pet' opens a model-only window; the desktop (Tauri) build auto-shows a transparent always-on-top pet window. Stored locally in your browser."}
+          </p>
+        </div>
+      </InspectorPanel>
+    </div>
+  );
+}
+
 export function CharacterStage({
   avatarManifest,
   avatarState,
@@ -2048,60 +2213,33 @@ export function CharacterStage({
       : (copy === companionCopy.zh ? "静候问道" : "Present");
 
   const isZh = copy === companionCopy.zh;
-  const showPixel = displayStyle === "pixel" && pixelPortrait;
+  // 已移除"像素/夺舍"切换与"容相阁"入口，这些 props 保留以兼容调用方
+  void displayStyle;
+  void pixelPortrait;
+  void onToggleDisplayStyle;
+  void onBodySwitch;
+  void onAvatarClick;
 
   return (
     <div className="pca-stage__avatar">
-      <div className={`pca-stage-card ${showPixel ? "pca-stage-card--pixel" : ""}`}>
+      <div className="pca-stage-card">
         <div className="pca-stage-card__chrome">
           <span>{isZh ? `${characterAssetManifest.displayName}·道场` : `${characterAssetManifest.displayName} character stage`}</span>
           <StatusPill tone={safetyActive ? "warn" : memoryActive ? "good" : "info"}>
             {stageMood}
           </StatusPill>
-          {onToggleDisplayStyle && (
-            <button
-              aria-pressed={displayStyle === "pixel"}
-              className="pca-stage-card__style-toggle"
-              onClick={onToggleDisplayStyle}
-              title={isZh ? "切换夺舍·像素方块" : "Toggle pixel-block possession"}
-              type="button"
-            >
-              {displayStyle === "pixel"
-                ? (isZh ? "资产" : "Asset")
-                : (isZh ? "像素" : "Pixel")}
-            </button>
-          )}
         </div>
-        <button
+        <div
           className="pca-avatar-hitbox"
-          onClick={onAvatarClick}
-          title={isZh ? "轻点容颜可试感、入容相阁" : "Click the character to test reactions and open Avatar Studio"}
-          type="button"
+          title={isZh ? "轻点角色不同部位，她会有不同反应" : "Tap different parts of the character for different reactions"}
         >
-          {showPixel ? (
-            <PixelPortraitStage
-              badge={isZh ? "夺舍·像素" : "Pixel possession"}
-              memoryActive={memoryActive}
-              portrait={pixelPortrait}
-              safetyActive={safetyActive}
-              size="stage"
-              state={avatarState}
-            />
-          ) : (
-            <Stage3D
-              ariaLabel={isZh ? "玉璃清仪 三维舞台" : "Yuli Qingyi 3D stage"}
-              manifest={characterAssetManifest}
-              memoryActive={memoryActive}
-              safetyActive={safetyActive}
-              state={avatarState}
-            />
-          )}
-        </button>
-        <div className="pca-stage-card__footer">
-          <button className="pca-body-switch" onClick={onBodySwitch} type="button">
-            <Sparkles size={15} />
-            <span>{isZh ? "容相阁" : "Avatar Studio"}</span>
-          </button>
+          <Stage3D
+            ariaLabel={isZh ? "玉璃清仪 三维舞台" : "Yuli Qingyi 3D stage"}
+            manifest={characterAssetManifest}
+            memoryActive={memoryActive}
+            safetyActive={safetyActive}
+            state={avatarState}
+          />
         </div>
         <div className={`pca-speech-bubble ${ambientSpeech ? "is-active" : ""}`}>
           {ambientSpeech
@@ -2432,17 +2570,14 @@ export function ChatPanel({
           view="avatar"
         />
       </header>
-      <section className="pca-chat-character-card" aria-label={language === "zh" ? "聊天半身角色图" : "Chat half-body character"}>
-        <CharacterAssetRenderer
-          manifest={characterAssetManifest}
-          size="medium"
-          state={avatarState}
-          textFallback="玉"
-          view="halfbody"
-        />
+      <section className="pca-chat-character-card" aria-label={language === "zh" ? "聊天角色" : "Chat character"}>
+        {/* 用 3D 模型替代原来草率的 2D 半身贴图，和主舞台保持一致 */}
+        <div className="pca-chat-character-card__model">
+          <Stage3D bare manifest={characterAssetManifest} state={avatarState} ariaLabel={characterAssetManifest.displayName} />
+        </div>
         <div>
           <strong>{characterAssetManifest.displayName}</strong>
-          <p>{language === "zh" ? "聊天和小窗优先使用本地半身资产；缺失时会退回全身图或显示导入提示。" : "Chat and compact windows prefer the local half-body asset, then fall back to full-body or a clear import prompt."}</p>
+          <p>{language === "zh" ? "形象与主舞台同步使用你的 3D 模型，可拖动旋转查看。" : "Shares the same 3D model as the main stage; drag to rotate."}</p>
         </div>
       </section>
       <div className="pca-command-row">

@@ -10,8 +10,10 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
+        "label": "main",
         "title": "Mira Floating Companion",
         "width": 1180,
         "height": 760,
@@ -21,14 +23,34 @@
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": false,
-        "shadow": true,
+        "shadow": false,
         "center": true
+      },
+      {
+        "label": "pet",
+        "title": "Desktop Pet",
+        "url": "index.html?pet=1",
+        "width": 360,
+        "height": 480,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "shadow": false,
+        "skipTaskbar": true,
+        "visible": true
       }
     ]
   },
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": ["icons/icon.ico"]
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   }
 }
